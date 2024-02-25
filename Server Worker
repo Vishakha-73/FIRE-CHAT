@@ -1,0 +1,74 @@
+package com.project.chatapp.network;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class ServerWorker extends Thread {
+	private Socket connectionmadeSocket;
+	private InputStream in;
+	private static OutputStream out;
+	//private static  DataOutputStream out;
+	private Server server;
+	//private static DataInputStream in;
+	
+	public ServerWorker(Socket connectionmadeSocket,Server server) throws IOException{
+		this.server=server;
+		this.connectionmadeSocket=connectionmadeSocket;
+		in=connectionmadeSocket.getInputStream();//read data from client
+		//in=new DataInputStream(connectionmadeSocket.getInputStream());
+		out=connectionmadeSocket.getOutputStream();//write data on client
+		//out=new DataOutputStream(connectionmadeSocket.getOutputStream());
+		System.out.println("New Client Arrived...");
+	}
+	
+	//read data from the client and broadcast the data to all other clients
+	public void run() {
+		String line="";
+		BufferedReader br=new BufferedReader(new InputStreamReader(in));//reads data and stores as string
+		
+		//as br reads line by line(till enter is pressed, it will read the message line by line and each line comes in while one after another
+		try {
+		while(true) {
+				line=br.readLine();
+				if(line.equalsIgnoreCase("quit")) {
+					break;//end chat with client
+				}
+				
+				for(ServerWorker serverWorker: server.workers) {
+					line=line+"\n";
+					serverWorker.out.write(line.getBytes());
+				}
+		
+	      }
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		   }
+		finally {
+			try {
+				if(br!=null) {
+					br.close();}
+				if(in!=null) {
+					in.close();
+				}
+				if(out!=null) {
+					out.close();
+				}
+				if(connectionmadeSocket!=null) {
+					connectionmadeSocket.close();
+				}
+			}
+				catch(Exception e) {
+					e.printStackTrace();
+			}
+		}
+	}
+	
+	
+}
