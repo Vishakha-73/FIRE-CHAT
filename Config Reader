@@ -1,0 +1,12 @@
+package com.project.chatapp.utils;
+
+import java.util.ResourceBundle;
+
+public class ConfigReader {
+	ConfigReader(){}//creating object of ConfigReader is not possible
+	private static ResourceBundle rb=ResourceBundle.getBundle("config");
+	public static String getValue(String key) {
+		return rb.getString(key);
+	}
+
+}
