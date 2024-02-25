@@ -1,0 +1,165 @@
+package com.project.chatapp.screen;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+//import javax.swing.border.EmptyBorder;
+import javax.swing.border.EmptyBorder;
+
+import com.project.chatapp.network.Client;
+import com.project.chatapp.network.ServerWorker;
+import com.project.chatapp.utils.UserInfo;
+
+public class ClientChatScreen  {
+	private static JPanel newp;
+    private JPanel p;
+	private JTextArea textArea;
+	private JTextArea textArea1;
+	private Client client;
+	static Box vertical=Box.createVerticalBox();
+	JScrollPane scrollPane ;
+	static JFrame f=new JFrame();
+	
+	public static void main(String[] args) {
+		try {
+			ClientChatScreen frame = new ClientChatScreen();
+		  }
+		catch (UnknownHostException e) {
+			e.printStackTrace();
+		  } 
+		catch (IOException e) {
+			e.printStackTrace();
+		  }
+	   }
+
+	public void sendIt() {
+		 String message=textArea1.getText();
+		
+		try {
+			System.out.println("Line Read...");
+			client.sendMessage(UserInfo.USER_NAME+"-"+message);
+		  } 
+		catch (IOException e) {
+			e.printStackTrace();
+		  }
+	  }
+
+	public ClientChatScreen() throws UnknownHostException, IOException {
+		
+		f.setResizable(false);
+		textArea = new JTextArea();
+		textArea.setEditable(false);
+		client=new Client(textArea);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setSize(450,600);
+		
+        f.getContentPane().setLayout(null);
+		
+		p=new JPanel();
+	    p.setBackground(new Color(0,100,80));
+		p.setBounds(0,0,450,50);
+		p.setLayout(null);
+		f.getContentPane().add(p);
+		
+		ImageIcon i=new ImageIcon(ClientChatScreen.class.getResource("/images/3.png"));
+		Image i1=i.getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT);
+		ImageIcon i2=new ImageIcon(i1);
+		JLabel lb=new JLabel(i2);
+		lb.setBounds(10,15,20,20);
+		p.add(lb);
+		
+		lb.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent me) {
+				f.setVisible(false);
+			}
+		});
+		
+		ImageIcon i3=new ImageIcon(ClientChatScreen.class.getResource("/images/image 5.jpg"));
+		Image i4=i3.getImage().getScaledInstance(40,35,Image.SCALE_DEFAULT);
+		ImageIcon i5=new ImageIcon(i4);
+		JLabel profile=new JLabel(i5);
+		profile.setBounds(35,10,40,35);
+		p.add(profile);
+		
+		ImageIcon i6=new ImageIcon(ClientChatScreen.class.getResource("/images/phone.png"));
+		Image i7=i6.getImage().getScaledInstance(30,30,Image.SCALE_DEFAULT);
+		ImageIcon i8=new ImageIcon(i7);
+		JLabel phone=new JLabel(i8);
+		phone.setBounds(300,12,35,30);
+		p.add(phone);
+		
+		ImageIcon i9=new ImageIcon(ClientChatScreen.class.getResource("/images/video.png"));
+		Image i10=i9.getImage().getScaledInstance(35,30,Image.SCALE_DEFAULT);
+		ImageIcon i11=new ImageIcon(i10);
+		JLabel video=new JLabel(i11);
+		video.setBounds(360,12,35,30);
+		p.add(video);
+		
+		ImageIcon i12=new ImageIcon(ClientChatScreen.class.getResource("/images/3icon.png"));
+		Image i13=i12.getImage().getScaledInstance(10,20,Image.SCALE_DEFAULT);
+		ImageIcon i14=new ImageIcon(i13);
+		JLabel more=new JLabel(i14);
+		more.setBounds(420,16,10,20);
+		p.add(more);
+		
+		JLabel name=new JLabel(UserInfo.USER_NAME);
+		name.setBounds(80,20,150,18);
+		name.setForeground(Color.WHITE);
+		name.setFont(new Font("SAN_SERIF",Font.BOLD,18));
+		p.add(name);
+		
+		f.setSize(450,600);
+		
+		newp=new JPanel();
+		newp.setBounds(0,53,450,547);
+		newp.setLayout(null);
+		f.getContentPane().add(newp);
+		
+		JScrollPane scrollPane1 = new JScrollPane();
+		scrollPane1.setBounds(0,455,370,50);
+		newp.add(scrollPane1);
+		
+		textArea1=new JTextArea();
+		textArea1.setBounds(0,455,370,50);
+		textArea1.setFont(new Font("Mongolian Baiti", Font.PLAIN, 17));
+		textArea1.setColumns(10);
+		scrollPane1.setViewportView(textArea1);
+		
+		ImageIcon i15=new ImageIcon(ClientChatScreen.class.getResource("/images/greensend.jpg"));
+		Image i16=i15.getImage().getScaledInstance(57,50,Image.SCALE_DEFAULT);
+		ImageIcon i17=new ImageIcon(i16);
+		JButton sendIt = new JButton(i17);
+		sendIt.setBounds(375,455,57,50);
+		sendIt.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		newp.add(sendIt);
+		
+		sendIt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendIt();
+			}
+		});
+		
+		f.setVisible(true);
+	  }
+				 
+ }
+    
