@@ -1,0 +1,55 @@
+package com.project.chatapp.network;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+import com.project.chatapp.screen.ClientChatScreen;
+import com.project.chatapp.utils.ConfigReader;
+
+public class Server {
+	ServerSocket serverSocket;
+	ArrayList<ServerWorker> workers=new ArrayList<>();
+	
+	public Server() throws IOException {
+		int PORT=Integer.parseInt(ConfigReader.getValue("PORTNO"));
+		serverSocket=new ServerSocket(PORT);
+		System.out.println("Server Start and Waiting for the Clients to join");
+		handleClientRequest();
+	}
+	
+	public void handleClientRequest() throws IOException {
+		//while is written to handle request of multiple clients
+		while(true) {
+		Socket connectionmadeSocket=serverSocket.accept();//handshaking means server accepts anything that comes from client
+		ServerWorker serverWorker=new ServerWorker(connectionmadeSocket,this);//creating a new thread
+		workers.add(serverWorker);
+		//String line=ClientChatScreen.run();
+		
+		/*for(ServerWorker i:workers) {
+		ServerWorker.print(line);
+	   }*/
+	}
+	}
+	
+	/*           Single Client
+	public Server() throws IOException {
+		int PORT=Integer.parseInt(ConfigReader.getValue("PORTNO"));
+		serverSocket=new ServerSocket(PORT);
+		System.out.println("Server Started and waiting for the Client Connection...");
+		Socket socket=serverSocket.accept();//connection is established between server and client
+		System.out.println("Client joins the server");
+		InputStream in=socket.getInputStream();
+		byte arr[]=in.readAllBytes();
+		String str=new String(arr);
+		System.out.println("Message received from the Client "+str);
+		in.close();
+		socket.close();
+	}     */
+
+	public static void main(String[] args) throws IOException {
+		Server server=new Server();
+     }
+}
