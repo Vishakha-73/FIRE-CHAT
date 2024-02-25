@@ -1,0 +1,68 @@
+package com.project.chatapp.dao;
+
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.project.chatapp.dto.UserDTO;
+import com.project.chatapp.utils.Encryption;
+
+public class UserDAO {
+	
+	public static boolean isLogin(UserDTO userDTO) throws SQLException, ClassNotFoundException, NoSuchAlgorithmException {
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		final String SQL="select userid from users where userid=? and password=?";
+		try {
+			con=CommonDAO.createConnection();
+			pstmt=con.prepareStatement(SQL);
+			//now pstmt=SQL
+			pstmt.setString(1,userDTO.getUserid());//1 specifies the first designated parameter
+			pstmt.setString(2,Encryption.passwordEncrypt(new String(userDTO.getPassword())));
+			rs=pstmt.executeQuery();
+			return rs.next();
+		}
+		finally {
+			if(rs!=null)
+				rs.close();
+			if(pstmt!=null)
+				pstmt.close();
+			if(con!=null)
+				con.close();
+		}
+	}
+	
+	public static int add(UserDTO userDTO) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
+		System.out.println("Received "+userDTO.getUserid()+" "+userDTO.getPassword());
+		Connection connection=null;
+		Statement stmt=null;// Statement is a interface for queries
+		try {
+		connection=CommonDAO.createConnection();//connection is created
+		stmt=connection.createStatement();//creates a Statement object to send SQL queries to database
+		
+		 //insert into users (userid,password) values('krishna','krishna1234')
+		//'krishna' is stored in object userDTO and can be written as 'userDTO.getUserid()'
+  int record=stmt.executeUpdate("insert into users (userid,password) values('"+userDTO.getUserid()+"','"+Encryption.passwordEncrypt(new String(userDTO.getPassword()))+"')");
+		//updates and executes the sql statement which can be insert,delete and update    //it allows us to do a query
+		//new String is added so that at runtime we get password as string not as char array
+        //the password is directly visible on the database but is not visible on the screen
+        return record;//first finally will execute then it will return record
+		}
+       finally {
+    	   if(stmt!=null) {
+      stmt.close();
+    	   }
+    	   if(connection!=null) {
+      connection.close();
+           }
+      }
+		
+	}
+	public static void main(String args[])throws SQLException, ClassNotFoundException, NoSuchAlgorithmException {
+		UserDAO userDAO =new UserDAO();
+	}
+}
