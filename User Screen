@@ -1,0 +1,149 @@
+package com.project.chatapp.screen;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import com.project.chatapp.dao.UserDAO;
+import com.project.chatapp.dto.UserDTO;
+import com.project.chatapp.network.Server;
+import com.project.chatapp.utils.UserInfo;
+
+public class UserScreen extends JFrame{
+	private JTextField textField;
+	private JPasswordField passwordField;
+
+	public static void main(String[] args) {
+		UserScreen window = new UserScreen();
+	}
+	
+	//UserDAO userDAO=new UserDAO();
+	
+	private void doLogin() {
+		String userid=textField.getText();
+		char[] password=passwordField.getPassword();
+		UserDAO userDAO=new UserDAO();
+		UserDTO userDTO=new UserDTO(userid,password);
+		try {
+		boolean result=UserDAO.isLogin(userDTO);
+		if(result) {
+			String message="Welcome "+userid;
+			UserInfo.USER_NAME=userid;
+			JOptionPane.showMessageDialog(this,message);
+			setVisible(false);
+			dispose();
+		    DashBoard dashBoard=new DashBoard(message);
+		    dashBoard.setVisible(true);
+		}
+		else
+			JOptionPane.showMessageDialog(this,"Invalid userid or password");
+		}
+		catch(ClassNotFoundException | SQLException ex) {
+			System.out.println("Database Issue...");
+			ex.printStackTrace();
+		}
+		catch(Exception ex) {
+			System.out.println("Some Generic Exception Raised");
+			ex.printStackTrace();
+		}
+	}
+	
+	private void register() {
+		String userid=textField.getText();
+		char[] password=passwordField.getPassword();
+		UserDAO userDAO=new UserDAO();
+		UserDTO userDTO=new UserDTO(userid,password);
+		try {
+		int result=UserDAO.add(userDTO);
+		if(result>0)
+			JOptionPane.showMessageDialog(this,"Register Successfully");
+		else
+			JOptionPane.showMessageDialog(this,"Register Failed");
+		}
+		catch(ClassNotFoundException | SQLException ex) {
+			System.out.println("Database Issue...");
+			ex.printStackTrace();
+		}
+		catch(Exception ex) {
+			System.out.println("Some Generic Exception Raised");
+			ex.printStackTrace();
+		}
+		//System.out.println("user id: "+userid+" password: "+password);
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public UserScreen() {
+		setResizable(false);
+		setFont(new Font("Dialog", Font.PLAIN, 7));
+		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("LOGIN");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 32));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(166, 11, 189, 71);
+		getContentPane().add(lblNewLabel);
+		
+		textField = new JTextField();
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		textField.setBounds(191, 104, 312, 35);
+		getContentPane().add(textField);
+		textField.setColumns(10);
+		
+		JLabel useridlbl = new JLabel("User Id");
+		useridlbl.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		useridlbl.setHorizontalAlignment(SwingConstants.CENTER);
+		useridlbl.setBounds(40, 102, 115, 35);
+		getContentPane().add(useridlbl);
+		
+		JLabel pwdlbl = new JLabel("   Password");
+		pwdlbl.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		pwdlbl.setHorizontalAlignment(SwingConstants.CENTER);
+		pwdlbl.setBounds(40, 170, 115, 35);
+		getContentPane().add(pwdlbl);
+		
+		JButton loginbt = new JButton("Login");
+		loginbt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doLogin();
+			}
+		});
+		loginbt.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		loginbt.setBounds(166, 233, 106, 35);
+		getContentPane().add(loginbt);
+		
+		JButton registerbt = new JButton("Register");
+		registerbt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				register();
+			}
+		});
+		registerbt.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		registerbt.setBounds(300, 234, 106, 32);
+		getContentPane().add(registerbt);
+		
+		passwordField = new JPasswordField();
+		passwordField.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		passwordField.setBounds(191, 174, 312, 31);
+		getContentPane().add(passwordField);
+		setBackground(Color.WHITE);
+		setSize(565, 347);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setVisible(true);
+		
+	}
+       }
